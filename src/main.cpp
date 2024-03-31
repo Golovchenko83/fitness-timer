@@ -6,7 +6,7 @@
 #include <GyverPower.h>
 #define WIRE Wire
 Adafruit_SSD1306 display = Adafruit_SSD1306(128, 64, &WIRE);
-volatile byte flagSleep = 2;
+volatile byte flagSleep = 2,dysplay_init=1;
 volatile byte flagNazatia;            // флаг о нажатии или отжатии кнопки
 volatile byte flagFitnessTaimer;      // флаг о запуске или истечении Fitness таймера
 volatile byte flagClickTaimer;        // флаг о запуске или истечении таймера для двойного нажатия
@@ -27,6 +27,10 @@ unsigned long ostatok;                // время в миллисекунда�
 
 void Vivod() // вывод информации на дисплей
 {
+  if(dysplay_init==0){
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  dysplay_init=1;
+  }
   display.clearDisplay();
   // вывод выбранных минут без запущенного таймера
   display.setCursor(17, 4);
@@ -123,14 +127,19 @@ void Interrupt() // функция прерывания
   }
   else
   {
+    digitalWrite(7,0);
+    delay(100);
     flagSleep++;
+   
   }
 }
 
 void setup()
 {
   pinMode(2, INPUT_PULLUP);                                     // подтяжка 2 пина к резистору
-  pinMode(3, OUTPUT);                                           // 3 пин, на котором находится пищалка объявляется выходом
+  pinMode(3, OUTPUT);                                            // 3 пин, на котором находится пищалка объявляется выходом
+  pinMode(7, OUTPUT);
+  digitalWrite(7,0);                                           
   attachInterrupt(digitalPinToInterrupt(2), Interrupt, CHANGE); // 2 пин объявляется пином с прерыванием и режимом FALLING
   Serial.begin(9600);
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
@@ -211,11 +220,19 @@ void loop()
       // обновление дисплея
       display.display();
       // мелодия истечения Fitness таймера
-      tone(3, 1000, 200);
-      delay(400);
-      tone(3, 1000, 200);
-      delay(400);
-      tone(3, 1000, 200);
+      tone(3, 1000, 400);
+      delay(500);
+      tone(3, 2000, 400);
+      delay(500);
+      tone(3, 1000, 400);
+      delay(500);
+      tone(3, 2000, 400);
+      delay(500);
+      tone(3, 1000, 400);
+      delay(500);
+      tone(3, 2000, 400);
+      delay(500);
+      tone(3, 500, 2000);
       flagFitnessTaimer = 0; // опускание флага Fitness таймера при Fitness таймера
     }
     UpdateFitnessTaimer = svoimillis + 1000; // запуск таймера не обновления информации Fitness таймера на дисплее
@@ -225,10 +242,10 @@ void loop()
   if (InterruptTaimer <= svoimillis) // если таймер пробуждения истёк
   {
     flagSleep = 0;
+    dysplay_init=0;
     display.clearDisplay();
     display.display();
-    Serial.println(flagSleep);
-    delay(1000);
+    digitalWrite(7,1); 
     power.sleep(SLEEP_FOREVER); // уход Arduino в вечный сон до первого прерывания
   }
 }
