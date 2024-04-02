@@ -86,7 +86,6 @@ void Update() // вывод информации на дисплей кажды�
 
 void Interrupt() // функция прерывания
 {
-  Serial.println(".");
   InterruptTaimer = svoimillis + 660000; // обновление таймера пробуждения
   d_update = 1;  
                           // обновление информации на дисплее
@@ -96,8 +95,6 @@ void Interrupt() // функция прерывания
     antidebounce = svoimillis+500;
     digitalWrite(7, 0);
     flagSleep++;
-    Serial.println(antidebounce);
-    Serial.println(svoimillis - antidebounce);
   }
 
     if (flagNazatia == 0 && (svoimillis - antidebounce) >= delays) // если на кнопку нажали. Антидребезг
@@ -106,16 +103,12 @@ void Interrupt() // функция прерывания
       nazatie = svoimillis;      // фиксирование времени нажатия кнопки
       antidebounce = svoimillis; // фиксирование времени нажатия кнопки для антидребезга
       flagNazatia = 1;           // поднятие флага нажатия кнопки при нажатии кнопки
-      Serial.println("Нажатие");
-      Serial.println(antidebounce);
     }
 
     if (digitalRead(2) && flagNazatia == 1 && (svoimillis - antidebounce) >= delays) // если кнопку отжали после нажатия
     {
-      Serial.println("Отжатие");
       antidebounce = svoimillis; // фиксирование времени нажатия кнопки для антидребезга
       otrezok = svoimillis - nazatie;
-      Serial.println(otrezok);
       flagNazatia = 0; // опускание флага нажатия кнопки при отпускании кнопки
 
       if (otrezok < 350) // если кнопку отжали за 400 или меньше миллисекунд (клик)
@@ -154,7 +147,7 @@ void setup()
   pinMode(4, OUTPUT);
   digitalWrite(7, 0);
   attachInterrupt(digitalPinToInterrupt(2), Interrupt, CHANGE); // 2 пин объявляется пином с прерыванием и режимом FALLING
-  Serial.begin(9600);
+ // Serial.begin(9600);
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   display.setTextSize(8);
   display.setTextColor(SSD1306_WHITE);
