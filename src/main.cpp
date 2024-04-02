@@ -160,7 +160,7 @@ void setup()
   display.setTextColor(SSD1306_WHITE);
   power.setSleepMode(POWERDOWN_SLEEP); // выбор типа сна
   // отключение ненужных перифирий
-  /*power.hardwareDisable(PWR_TIMER3);
+  power.hardwareDisable(PWR_TIMER3);
    power.hardwareDisable(PWR_TIMER4);
    power.hardwareDisable(PWR_TIMER5);
    power.hardwareDisable(PWR_UART0);
@@ -168,7 +168,7 @@ void setup()
    power.hardwareDisable(PWR_UART2);
    power.hardwareDisable(PWR_UART3);
    power.hardwareDisable(PWR_SPI);
-   power.hardwareDisable(PWR_USB);*/
+   power.hardwareDisable(PWR_USB);
   Vivod(); // вывод информации на дисплей
 }
 
